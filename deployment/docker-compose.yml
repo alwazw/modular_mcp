@@ -355,6 +355,52 @@ services:
           memory: 256M
           cpus: '0.5'
 
+  # n8n Workflow Automation
+  n8n:
+    image: n8nio/n8n:latest
+    container_name: mcp_n8n
+    restart: unless-stopped
+    environment:
+      - N8N_HOST=mcp.visionvation.com
+      - N8N_PORT=5678
+      - N8N_PROTOCOL=https
+      - WEBHOOK_URL=https://mcp.visionvation.com/
+      - GENERIC_TIMEZONE=America/New_York
+      - N8N_BASIC_AUTH_ACTIVE=true
+      - N8N_BASIC_AUTH_USER=${N8N_USER:-admin}
+      - N8N_BASIC_AUTH_PASSWORD=${N8N_PASSWORD:-WaficWazzan!2}
+      - N8N_ENCRYPTION_KEY=${N8N_ENCRYPTION_KEY:-your_encryption_key_here}
+      - DB_TYPE=postgresdb
+      - DB_POSTGRESDB_HOST=postgres
+      - DB_POSTGRESDB_PORT=5432
+      - DB_POSTGRESDB_DATABASE=n8n
+      - DB_POSTGRESDB_USER=mcp_user
+      - DB_POSTGRESDB_PASSWORD=${DB_PASSWORD:-mcp_secure_password_2024}
+      - N8N_METRICS=true
+      - N8N_DIAGNOSTICS_ENABLED=false
+      - N8N_VERSION_NOTIFICATIONS_ENABLED=false
+      - N8N_TEMPLATES_ENABLED=true
+      - N8N_ONBOARDING_FLOW_DISABLED=true
+      - N8N_USER_MANAGEMENT_DISABLED=false
+    volumes:
+      - n8n_data:/home/node/.n8n
+      - shared_uploads:/home/node/.n8n/custom
+    ports:
+      - "5678:5678"
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - mcp_network
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+          cpus: '2'
+        reservations:
+          memory: 512M
+          cpus: '1'
+
 volumes:
   postgres_data:
     driver: local
@@ -379,6 +425,8 @@ volumes:
   loki_data:
     driver: local
   grafana_data:
+    driver: local
+  n8n_data:
     driver: local
 
 networks:

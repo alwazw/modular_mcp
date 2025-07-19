@@ -2,6 +2,7 @@
 .env
 .env.local
 .env.production
+.alwazw.env
 
 # Logs
 *.log
@@ -109,4 +110,10 @@ temp/
 *.tar.gz
 *.zip
 *.rar
+
+# n8n data
+.n8n/
+
+# Test files
+hello_qwen.py
 

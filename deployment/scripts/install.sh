@@ -62,7 +62,44 @@ sudo apt install -y \
     net-tools \
     ufw \
     fail2ban \
-    logrotate
+    logrotate \
+    python3 \
+    python3-pip \
+    python3-venv
+
+# Install Python packages
+log "Installing Python packages..."
+pip3 install --upgrade pip
+pip3 install -U openai
+
+# Test Qwen API connection
+log "Creating Qwen API test script..."
+cat > /tmp/hello_qwen.py <<'EOF'
+import os
+from openai import OpenAI
+
+try:
+    client = OpenAI(
+        # If the environment variable is not configured, replace the following line with your API key: api_key="sk-xxx",
+        api_key=os.getenv("DASHSCOPE_API_KEY"),
+        base_url="https://dashscope-intl.aliyuncs.com/compatible-mode/v1",
+    )
+
+    completion = client.chat.completions.create(
+        model="qwen-plus",  # Model list: https://www.alibabacloud.com/help/en/model-studio/getting-started/models
+        messages=[
+            {'role': 'system', 'content': 'You are a helpful assistant.'},
+            {'role': 'user', 'content': 'Who are you?'}
+            ]
+    )
+    print("✅ Qwen API Test Successful!")
+    print(f"Response: {completion.choices[0].message.content}")
+except Exception as e:
+    print(f"❌ Qwen API Test Failed: {e}")
+    print("For more information, see: https://www.alibabacloud.com/help/en/model-studio/developer-reference/error-code")
+EOF
+
+log "Qwen API test script created at /tmp/hello_qwen.py"
 
 # Check if Docker is installed
 if ! command -v docker &> /dev/null; then
@@ -102,9 +139,22 @@ fi
 log "Setting up environment configuration..."
 cd $PROJECT_DIR/deployment
 if [ ! -f .env ]; then
-    cp .env.example .env 2>/dev/null || cp .env .env.backup
-    log "Environment file created. Please edit $PROJECT_DIR/deployment/.env with your settings."
+    if [ -f .alwazw.env ]; then
+        log "Using custom alwazw environment configuration..."
+        cp .alwazw.env .env
+    else
+        log "Using example environment configuration..."
+        cp .env.example .env
+        warn "Please edit $PROJECT_DIR/deployment/.env with your settings."
+    fi
 fi
+
+# Test Qwen API with actual credentials
+log "Testing Qwen API connection..."
+export DASHSCOPE_API_KEY='sk-991e406e28cf4e71a3a36b805e76d193'
+python3 /tmp/hello_qwen.py
+
+log "Qwen API test completed. Check output above for results."
 
 # Create necessary directories
 log "Creating data directories..."

@@ -12,7 +12,7 @@ A comprehensive, modular multi-agent system built for data collection, knowledge
 
 ```bash
 # Clone and install on your Ubuntu server
-git clone https://github.com/your-username/modular_mcp.git
+git clone https://github.com/alwazw/modular_mcp.git
 cd modular_mcp/deployment
 chmod +x scripts/install.sh
 ./scripts/install.sh
@@ -20,6 +20,7 @@ chmod +x scripts/install.sh
 
 ### Access Your System
 - **Main GUI**: https://mcp.visionvation.com
+- **n8n Workflows**: https://mcp.visionvation.com/n8n
 - **Monitoring**: https://mcp.visionvation.com/grafana
 - **API Docs**: https://mcp.visionvation.com/docs
 
@@ -58,6 +59,13 @@ chmod +x scripts/install.sh
 - n8n integration with webhook support
 - Real-time system metrics
 - **Port**: 5004 | **URL**: `/orchestrator/`
+
+### **n8n Workflow Automation**
+- Visual workflow builder
+- Multi-agent task orchestration
+- Webhook triggers and API integrations
+- Scheduled and event-driven automation
+- **Port**: 5678 | **URL**: `/n8n/`
 
 ## 🎨 Features
 
